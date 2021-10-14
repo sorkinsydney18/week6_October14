@@ -59,6 +59,21 @@ Before getting started, it is a good idea to take a look at the structure of the
 
 Is war rare or common? **Make a histogram of the main dependent variable, `init`. Comment on what you see, being sure to keep the unit of observation and the definition of the `init` variable in mind. Is what you see surprising? What does it say about the frequency of initiating conflict?**
 
+```{r, q1 part b}
+
+s_data %>% 
+  group_by(year, ccode1) %>% 
+  ggplot(aes(x = init)) +
+  geom_bar() +
+  labs(title = "Conflicts Initiated by Countries between 1990-2007",
+       x = "# of conflicts initated in a given year")
+  
+
+
+```
+
+
+
 ## Question 2
 
 **How were the `autocracy` and `suffrage` variables defined? Can autocracies also have women's suffrage (at least in this coding scheme)? What reasons do the authors of the paper give for these coding decisions and how do you think it might affect their findings?** (Hint: take a close look at pages 651 and 652 of the original article.)
@@ -67,11 +82,58 @@ Is war rare or common? **Make a histogram of the main dependent variable, `init`
 
 The democratic peace - i.e. the propensity for democracies to avoid conflict with each other, and to avoid conflict more generally - is an empirical regularity. The theory, as originally posed, is not gendered. Do the data support the democratic peace theory? **Ignoring suffrage status for now, do the data suggest that modern democracies initiate fewer conflicts than autocracies? Do democracies tend to initiate conflict more with autocracies or other democracies?**
 
+```{r, q3}
+
+dem_conflict <- s_data %>%
+  mutate(democracy = ifelse(polity >= 6, 1, 0))
+
+dem_conflict %>% 
+  ggplot(aes(x = year, y = init, color = democracy)) +
+  geom_point()
+  
+#deomocracy conflict  
+dem_conflict %>% 
+  group_by(democracy) %>% 
+  summarise(mean(init))
+
+
+#dem conflict specific - autocracies
+
+dem_conflict %>% 
+  filter(democracy == 1) %>%
+  summarise(mean(init_autoc)) 
+
+#dem conflict - other dems
+dem_conflict %>% 
+  filter(democracy == 1) %>%
+  summarise(mean(init_democ)) 
+
+
+
+```
+
+
 ## Question 4 
 
 Now that we've taken a look at the classic democratic peace theory, let's take an initial look at how women's suffrage is related to initiating conflict. **Conduct a bivariate regression, modeling the number of conflicts initiated with women's suffrage (i.e. `init ~ suffrage`). This will help inform you about how the number of conflict initiated in a year depends on women's suffrage. Report the coefficient on `suffrage`. Interpret your results. If you like, extend the problem by reporting the 95% confidence interval for the `suffrage` coefficient. Is the relationship statistically significant?**
 
 **The `lm()` function is used to calculate regressions in R. [Here](https://www.datacamp.com/community/tutorials/linear-regression-R) is a guide to linear regression in R that may be helpful.**
+
+
+```{r, q4}
+
+#relationship between init and suffrage
+
+summary(lm(init ~ suffrage, data = s_data))
+
+#confidence interval - multiply SD error by 1.96 in either direction 
+
+
+
+
+```
+
+
 
 ## Question 5
 
