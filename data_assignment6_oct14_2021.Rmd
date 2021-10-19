@@ -87,9 +87,7 @@ The democratic peace - i.e. the propensity for democracies to avoid conflict wit
 dem_conflict <- s_data %>%
   mutate(democracy = ifelse(polity >= 6, 1, 0))
 
-dem_conflict %>% 
-  ggplot(aes(x = year, y = init, color = democracy)) +
-  geom_point()
+
   
 #deomocracy conflict  
 dem_conflict %>% 
@@ -128,7 +126,11 @@ summary(lm(init ~ suffrage, data = s_data))
 
 #confidence interval - multiply SD error by 1.96 in either direction 
 
+#lower bound
+(-0.050727 - (0.013532*1.96))
 
+#upper bound
+(-0.050727 + (0.013532*1.96))
 
 
 ```
@@ -138,6 +140,26 @@ summary(lm(init ~ suffrage, data = s_data))
 ## Question 5
 
 The model in the previous question was very simple; we modeled initiation only as a function of suffrage. In reality, the relationship is probably more complicated - conflict initiation probably depends on more than just women's suffrage. **Look at the other variables available in the data and find one or more that you think may also be related to conflict initiation. Explain why you think so, then add the variable(s) to the right side of the regression (as explanatory variables) in question 4. Interpret what you find.**
+
+```{r, q5}
+
+summary(lm(init ~ suffrage + polity + nuclear + democracy, data = dem_conflict))
+
+#how many nuclear powers are also democracies/non
+
+s_data %>% 
+  group_by(autocracy) %>% 
+  count(nuclear)
+
+
+#average conflicts initiated by nuclear powers 
+
+s_data %>% 
+  group_by(autocracy, nuclear) %>% 
+  summarise(mean(init))
+
+```
+
 
 ## Question 6: Data Science Question
 
